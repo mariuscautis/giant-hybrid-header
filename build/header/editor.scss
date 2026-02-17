@@ -1,0 +1,105 @@
+/* Editor-only styles for header block */
+.wp-block-giant-header-header {
+    border: 2px dashed #d1d1d1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.wp-block-giant-header-header .header-logo-control {
+    margin-bottom: 16px;
+}
+
+/* Logo Upload Section */
+.header-logo-control .components-placeholder {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    min-height: 150px;
+}
+
+.header-logo-control .components-placeholder__label {
+    color: white;
+    font-weight: 600;
+}
+
+.header-logo-control .components-placeholder__instructions {
+    color: rgba(255,255,255,0.9);
+}
+
+.header-logo-control .components-button.is-primary {
+    background: white;
+    color: #667eea;
+    border: none;
+    font-weight: 600;
+}
+
+.header-logo-control img {
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 8px;
+    background: white;
+}
+
+/* Color Picker Section */
+.components-base-control .components-color-palette {
+    margin-top: 12px;
+}
+
+.components-circular-option-picker__swatches {
+    gap: 12px !important;
+}
+
+.components-circular-option-picker__option-wrapper {
+    border: 2px solid transparent;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.components-circular-option-picker__option-wrapper:hover {
+    transform: scale(1.1);
+    border-color: #2271b1;
+}
+
+/* Text Controls */
+.components-panel__body .components-text-control__input[type="number"] {
+    background: #f0f0f0;
+    border: 2px solid #d1d1d1;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.components-panel__body .components-text-control__input[type="number"]:focus {
+    background: white;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.1);
+}
+
+/* Panel Body Styling */
+.components-panel__body-title {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+/* Editor Preview Visual Enhancement */
+.editor-styles-wrapper .wp-block-giant-header-header {
+    position: relative;
+}
+
+.editor-styles-wrapper .wp-block-giant-header-header::before {
+    content: 'HEADER BLOCK';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(102, 126, 234, 0.9);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    z-index: 100;
+}

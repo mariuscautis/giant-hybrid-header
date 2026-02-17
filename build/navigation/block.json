@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "giant-header/navigation-menu",
+  "title": "Navigation Menu",
+  "category": "theme",
+  "icon": "menu",
+  "description": "Navigation menu with nested submenu items",
+  "attributes": {
+    "menuItems": {"type": "array", "default": []},
+    "parentFontSize": {"type": "string", "default": "28"},
+    "childFontSize": {"type": "string", "default": "18"},
+    "parentColor": {"type": "string", "default": "#ffffff"},
+    "childColor": {"type": "string", "default": "#d1d1d1"},
+    "activeColor": {"type": "string", "default": "#FFD700"},
+    "chevronIcon": {"type": "object", "default": {"url": "", "id": null, "alt": ""}},
+    "chevronSize": {"type": "string", "default": "20"}
+  },
+  "supports": {"html": false},
+  "textdomain": "giant-header",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php"
+}

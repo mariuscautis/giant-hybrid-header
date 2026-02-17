@@ -1,0 +1,41 @@
+header{position:fixed;top:0;left:0;right:0;height:100px;z-index:100;display:flex;align-items:center;transition:background-color 0.3s ease}
+header .container{width:100%;margin:0 auto;padding:0 20px}
+header .menu-inner{position:relative;display:flex;align-items:center;justify-content:space-between;height:100px}
+
+/* Contact link - LEFT */
+header .contact-link{position:absolute;left:20px;top:50%;transform:translateY(-50%);display:flex;align-items:center;font-size:16px;font-weight:500;color:#fff;text-decoration:none;transition:opacity 0.3s;z-index:10}
+header .contact-link:hover{opacity:0.8}
+
+/* Logo - CENTER */
+header .logo{position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);z-index:10}
+header .logo-img{height:40px;max-width:200px;object-fit:contain}
+
+/* Menu icon - RIGHT */
+header .menu-icon{width:35px;height:35px;background-color:var(--parent-color,#fff);-webkit-mask-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23000"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>');mask-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23000"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>');-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;position:absolute;right:20px;top:50%;transform:translateY(-50%);cursor:pointer;z-index:10}
+
+/* Mobile menu overlay - full screen background */
+header .main-menu{position:fixed;top:0;left:0;right:0;bottom:0;background-color:var(--menu-bg-color,#000);display:flex;flex-direction:column;justify-content:center;align-items:center;transform:translateY(-100%);opacity:0;transition:transform 0.5s ease-in-out,opacity 0.5s ease-in-out;z-index:999}
+header .main-menu.open{transform:translateY(0);opacity:1}
+
+/* Menu content container - constrained width */
+header .main-menu .nav-outer,
+header .main-menu .menu-outer{width:100%;max-width:var(--container-width, 1200px);margin:0 auto;padding:0 20px;box-sizing:border-box}
+header .main-menu li{list-style:none;margin-bottom:10px}
+header .main-menu li a{text-decoration:none;font-weight:500}
+
+/* Close icon - positioned within container */
+header .close-icon{position:fixed;top:30px;right:calc(50% - var(--container-width, 1200px) / 2 + 30px);width:40px;height:40px;opacity:0;pointer-events:none;transition:opacity 0.3s;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFD700"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>');background-size:contain;background-position:center;background-repeat:no-repeat;cursor:pointer;z-index:1000}
+header .menu-inner.open .close-icon{opacity:1;pointer-events:auto}
+
+/* Mobile - close icon stays in viewport on small screens */
+@media screen and (max-width:768px){
+    header .close-icon{right:20px}
+}
+
+/* Mobile responsive */
+@media screen and (max-width:768px){
+    header .contact-link{font-size:14px;left:10px}
+    header .logo-img{height:30px;max-width:150px}
+    header .menu-icon{right:10px;width:30px;height:30px;background-color:var(--parent-color,#fff)}
+    header .contact-link img.contact-icon{max-width: 22px !important;}
+}

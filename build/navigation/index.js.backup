@@ -1,0 +1,257 @@
+(function(wp) {
+    const { registerBlockType } = wp.blocks;
+    const { useBlockProps, InspectorControls } = wp.blockEditor;
+    const { Button, PanelBody, TextControl, SelectControl, Card, CardBody } = wp.components;
+    const { __ } = wp.i18n;
+    const { createElement: el, useState } = wp.element;
+
+    registerBlockType('giant-header/navigation-menu', {
+        edit: function(props) {
+            const { attributes, setAttributes } = props;
+            const { menuItems } = attributes;
+            const blockProps = useBlockProps({ className: 'nav-outer' });
+
+            const addMenuItem = function() {
+                const newItems = [...menuItems, {
+                    id: Date.now(),
+                    type: 'link',
+                    title: '',
+                    url: '',
+                    subMenus: []
+                }];
+                setAttributes({ menuItems: newItems });
+            };
+
+            const updateMenuItem = function(index, field, value) {
+                const updated = [...menuItems];
+                updated[index][field] = value;
+                setAttributes({ menuItems: updated });
+            };
+
+            const removeMenuItem = function(index) {
+                setAttributes({ menuItems: menuItems.filter((_, i) => i !== index) });
+            };
+
+            const addSubMenu = function(itemIndex) {
+                const updated = [...menuItems];
+                if (!updated[itemIndex].subMenus) updated[itemIndex].subMenus = [];
+                updated[itemIndex].subMenus.push({ id: Date.now(), heading: '', childItems: [] });
+                setAttributes({ menuItems: updated });
+            };
+
+            const updateSubMenu = function(itemIndex, subIndex, field, value) {
+                const updated = [...menuItems];
+                updated[itemIndex].subMenus[subIndex][field] = value;
+                setAttributes({ menuItems: updated });
+            };
+
+            const removeSubMenu = function(itemIndex, subIndex) {
+                const updated = [...menuItems];
+                updated[itemIndex].subMenus = updated[itemIndex].subMenus.filter((_, i) => i !== subIndex);
+                setAttributes({ menuItems: updated });
+            };
+
+            const addChildItem = function(itemIndex, subIndex) {
+                const updated = [...menuItems];
+                if (!updated[itemIndex].subMenus[subIndex].childItems) updated[itemIndex].subMenus[subIndex].childItems = [];
+                updated[itemIndex].subMenus[subIndex].childItems.push({ id: Date.now(), name: '', url: '' });
+                setAttributes({ menuItems: updated });
+            };
+
+            const updateChildItem = function(itemIndex, subIndex, childIndex, field, value) {
+                const updated = [...menuItems];
+                updated[itemIndex].subMenus[subIndex].childItems[childIndex][field] = value;
+                setAttributes({ menuItems: updated });
+            };
+
+            const removeChildItem = function(itemIndex, subIndex, childIndex) {
+                const updated = [...menuItems];
+                updated[itemIndex].subMenus[subIndex].childItems = updated[itemIndex].subMenus[subIndex].childItems.filter((_, i) => i !== childIndex);
+                setAttributes({ menuItems: updated });
+            };
+
+            return el('div', null,
+                el(InspectorControls, null,
+                    el(PanelBody, { title: __('Navigation Settings'), initialOpen: true },
+                        el('p', { style: { marginBottom: '16px', color: '#666' } }, __('Manage your navigation menu items below.')),
+                        el(Button, { variant: 'primary', onClick: addMenuItem }, __('+ Add Menu Item'))
+                    ),
+                    menuItems.map(function(item, itemIndex) {
+                        return el(PanelBody, { key: item.id, title: item.title || __('Menu Item'), initialOpen: false },
+                            el(Card, null,
+                                el(CardBody, null,
+                                    el(SelectControl, {
+                                        label: __('Menu Item Type'),
+                                        value: item.type,
+                                        options: [
+                                            { label: __('Simple Link'), value: 'link' },
+                                            { label: __('Parent with URL'), value: 'parent-with-url' },
+                                            { label: __('Parent without URL'), value: 'parent-no-url' }
+                                        ],
+                                        onChange: function(value) { updateMenuItem(itemIndex, 'type', value); }
+                                    }),
+                                    el(TextControl, {
+                                        label: __('Title'),
+                                        value: item.title,
+                                        onChange: function(value) { updateMenuItem(itemIndex, 'title', value); },
+                                        placeholder: __('Enter title')
+                                    }),
+                                    item.type !== 'parent-no-url' && el(TextControl, {
+                                        label: __('URL'),
+                                        value: item.url,
+                                        onChange: function(value) { updateMenuItem(itemIndex, 'url', value); },
+                                        placeholder: __('https://example.com')
+                                    }),
+                                    item.type !== 'link' && el('div', { style: { marginTop: '16px' } },
+                                        el('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '12px' } },
+                                            el('strong', null, __('Submenus')),
+                                            el(Button, {
+                                                variant: 'secondary',
+                                                isSmall: true,
+                                                onClick: function() { addSubMenu(itemIndex); }
+                                            }, __('+ Add Submenu'))
+                                        ),
+                                        item.subMenus && item.subMenus.map(function(subMenu, subIndex) {
+                                            return el(Card, { key: subMenu.id, style: { marginBottom: '12px' } },
+                                                el(CardBody, null,
+                                                    el(TextControl, {
+                                                        label: __('Submenu Heading'),
+                                                        value: subMenu.heading,
+                                                        onChange: function(value) { updateSubMenu(itemIndex, subIndex, 'heading', value); }
+                                                    }),
+                                                    el('div', { style: { marginTop: '12px' } },
+                                                        el('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '8px' } },
+                                                            el('strong', { style: { fontSize: '12px' } }, __('Child Items')),
+                                                            el(Button, {
+                                                                variant: 'tertiary',
+                                                                isSmall: true,
+                                                                onClick: function() { addChildItem(itemIndex, subIndex); }
+                                                            }, __('+ Add'))
+                                                        ),
+                                                        subMenu.childItems && subMenu.childItems.map(function(child, childIndex) {
+                                                            return el('div', {
+                                                                key: child.id,
+                                                                style: { background: '#f9f9f9', padding: '8px', marginBottom: '8px', borderRadius: '4px' }
+                                                            },
+                                                                el(TextControl, {
+                                                                    label: __('Name'),
+                                                                    value: child.name,
+                                                                    onChange: function(value) { updateChildItem(itemIndex, subIndex, childIndex, 'name', value); }
+                                                                }),
+                                                                el(TextControl, {
+                                                                    label: __('URL'),
+                                                                    value: child.url,
+                                                                    onChange: function(value) { updateChildItem(itemIndex, subIndex, childIndex, 'url', value); }
+                                                                }),
+                                                                el(Button, {
+                                                                    variant: 'link',
+                                                                    isDestructive: true,
+                                                                    isSmall: true,
+                                                                    onClick: function() { removeChildItem(itemIndex, subIndex, childIndex); }
+                                                                }, __('✕ Remove'))
+                                                            );
+                                                        })
+                                                    ),
+                                                    el(Button, {
+                                                        variant: 'link',
+                                                        isDestructive: true,
+                                                        onClick: function() { removeSubMenu(itemIndex, subIndex); },
+                                                        style: { marginTop: '8px' }
+                                                    }, __('✕ Remove Submenu'))
+                                                )
+                                            );
+                                        })
+                                    ),
+                                    el(Button, {
+                                        variant: 'link',
+                                        isDestructive: true,
+                                        onClick: function() { removeMenuItem(itemIndex); },
+                                        style: { marginTop: '16px' }
+                                    }, __('✕ Remove Menu Item'))
+                                )
+                            )
+                        );
+                    })
+                ),
+                el('section', blockProps,
+                    el('div', { className: 'container' },
+                        el('div', { className: 'menu-outer' },
+                            menuItems.length === 0 ?
+                                el('div', { style: { padding: '40px', textAlign: 'center', background: '#f0f0f0', borderRadius: '4px' } },
+                                    el('p', null, __('No menu items yet. Add items in the sidebar →'))
+                                ) :
+                                menuItems.map(function(item) {
+                                    if (item.type === 'link') {
+                                        return el('h3', { key: item.id },
+                                            el('a', { href: item.url || '#' }, item.title || __('(No title)'))
+                                        );
+                                    } else {
+                                        return item.subMenus && item.subMenus.map(function(subMenu) {
+                                            return el('div', { key: subMenu.id },
+                                                el('h3', { className: 'sub-menu-heading ' + item.type },
+                                                    item.type === 'parent-with-url' ?
+                                                        el('span', null,
+                                                            el('a', { href: item.url || '#' },
+                                                                el('span', null, subMenu.heading || __('(No heading)'))
+                                                            ),
+                                                            el('button', { className: 'menu-toggle-btn', type: 'button' })
+                                                        ) :
+                                                        el('span', null, subMenu.heading || __('(No heading)'))
+                                                ),
+                                                el('div', { className: 'menu-children' },
+                                                    el('ul', { className: 'menu-child-list' },
+                                                        subMenu.childItems && subMenu.childItems.map(function(child) {
+                                                            return el('li', { key: child.id },
+                                                                el('a', { href: child.url || '#' }, child.name || __('(No name)'))
+                                                            );
+                                                        })
+                                                    )
+                                                )
+                                            );
+                                        });
+                                    }
+                                })
+                        )
+                    )
+                )
+            );
+        },
+        save: function(props) {
+            const { attributes } = props;
+            const { menuItems } = attributes;
+            const blockProps = useBlockProps.save({ className: 'nav-outer' });
+
+            return el('section', blockProps,
+                el('div', { className: 'container' },
+                    el('div', { className: 'menu-outer' },
+                        menuItems.map(function(item) {
+                            if (item.type === 'link') {
+                                return el('h3', { key: item.id }, el('a', { href: item.url }, item.title));
+                            } else {
+                                return item.subMenus && item.subMenus.map(function(subMenu) {
+                                    return el('div', { key: subMenu.id },
+                                        el('h3', { className: 'sub-menu-heading ' + item.type },
+                                            item.type === 'parent-with-url' ?
+                                                el('span', null,
+                                                    el('a', { href: item.url }, el('span', null, subMenu.heading)),
+                                                    el('button', { className: 'menu-toggle-btn', type: 'button' })
+                                                ) :
+                                                el('span', null, subMenu.heading)
+                                        ),
+                                        el('div', { className: 'menu-children' },
+                                            el('ul', { className: 'menu-child-list' },
+                                                subMenu.childItems && subMenu.childItems.map(function(child) {
+                                                    return el('li', { key: child.id }, el('a', { href: child.url }, child.name));
+                                                })
+                                            )
+                                        )
+                                    );
+                                });
+                            }
+                        })
+                    )
+                )
+            );
+        }
+    });
+})(window.wp);

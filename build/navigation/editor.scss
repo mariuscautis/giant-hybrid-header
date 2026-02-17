@@ -1,0 +1,224 @@
+/* Editor-only styles for navigation menu block */
+.wp-block-giant-header-navigation-menu {
+    background: #f8f9fa;
+    border: 2px dashed #d1d1d1;
+    border-radius: 8px;
+    padding: 30px;
+    margin: 20px 0;
+}
+
+.wp-block-giant-header-navigation-menu .menu-item-preview {
+    margin-bottom: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.wp-block-giant-header-navigation-menu .menu-item-preview h3 {
+    margin: 0;
+    padding: 0;
+    color: #1e1e1e;
+    font-size: 18px;
+}
+
+/* Sidebar Panel Styling */
+.components-panel__body .components-card {
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.components-panel__body .components-card .components-card__body {
+    padding: 16px;
+}
+
+/* Menu Item Type Select */
+.components-panel__body .components-select-control {
+    background: #f0f0f0;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+/* Submenu Cards */
+.components-panel__body .components-card .components-card {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 12px;
+}
+
+/* Child Items Styling */
+.components-panel__body .components-card .components-card .components-card__body > div[style*="background: #f9f9f9"] {
+    background: #fff !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 6px !important;
+    padding: 12px !important;
+    margin-bottom: 12px !important;
+}
+
+/* Button Styling */
+.components-panel__body .components-button.is-primary {
+    background: #2271b1;
+    color: white;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: 500;
+}
+
+.components-panel__body .components-button.is-secondary {
+    background: white;
+    color: #2271b1;
+    border: 1px solid #2271b1;
+    border-radius: 4px;
+    padding: 6px 12px;
+}
+
+.components-panel__body .components-button.is-tertiary {
+    background: #f0f0f0;
+    color: #1e1e1e;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+}
+
+/* Section Headers */
+.components-panel__body strong {
+    color: #1e1e1e;
+    font-weight: 600;
+    font-size: 13px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Empty State */
+.wp-block-giant-header-navigation-menu div[style*="padding: 40px"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    padding: 40px !important;
+}
+
+.wp-block-giant-header-navigation-menu div[style*="padding: 40px"] p {
+    color: white;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Panel Body Title */
+.components-panel__body-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Text Input Fields */
+.components-text-control__input {
+    border: 1px solid #d1d1d1;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.components-text-control__input:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+/* Labels */
+.components-base-control__label {
+    font-weight: 600;
+    font-size: 12px;
+    color: #1e1e1e;
+    margin-bottom: 8px;
+}
+
+/* Help Text */
+.components-base-control__help {
+    font-size: 12px;
+    color: #757575;
+    margin-top: 8px;
+}
+
+/* Destructive Buttons */
+.components-button.is-destructive {
+    color: #cc1818;
+}
+
+.components-button.is-destructive:hover {
+    color: #a00;
+    background: #fef2f2;
+}
+
+/* Visual Hierarchy for Nested Content */
+.components-panel__body .components-card {
+    position: relative;
+}
+
+.components-panel__body .components-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px 0 0 8px;
+}
+
+/* Submenu Cards Different Color */
+.components-panel__body .components-card .components-card::before {
+    background: linear-gradient(180deg, #f093fb 0%, #f5576c 100%);
+}
+
+/* Clear separation from Advanced panel */
+.components-panel__body:last-of-type {
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #667eea;
+}
+
+/* Add visual indicator before Advanced section */
+.block-editor-block-inspector__advanced::before {
+    content: 'ADVANCED SETTINGS';
+    display: block;
+    padding: 12px 16px;
+    background: #f0f0f0;
+    color: #666;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin: -16px -16px 16px -16px;
+    border-left: 4px solid #999;
+}
+
+/* Reorder buttons */
+.menu-item-reorder-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.menu-item-reorder-buttons .components-button {
+    flex: 1;
+    justify-content: center;
+    background: #f0f0f0;
+    border: 1px solid #d1d1d1;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.menu-item-reorder-buttons .components-button:hover {
+    background: #e0e0e0;
+    border-color: #2271b1;
+}
+
+.menu-item-reorder-buttons .components-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
