@@ -2,16 +2,10 @@
 $logo = isset($attributes['logo']) ? $attributes['logo'] : ['url' => '', 'alt' => ''];
 $logo_url = isset($logo['url']) ? $logo['url'] : '';
 $logo_alt = isset($logo['alt']) ? $logo['alt'] : '';
+$logo_width = isset($attributes['logoWidth']) ? $attributes['logoWidth'] : '160';
 $bg_color = isset($attributes['backgroundColor']) ? $attributes['backgroundColor'] : 'transparent';
-$contact_text = isset($attributes['contactText']) ? $attributes['contactText'] : 'Contact us';
-$contact_url = isset($attributes['contactUrl']) ? $attributes['contactUrl'] : '#contact';
-$contact_display_mode = isset($attributes['contactDisplayMode']) ? $attributes['contactDisplayMode'] : 'label';
-$contact_icon = isset($attributes['contactIcon']) ? $attributes['contactIcon'] : ['url' => '', 'alt' => ''];
-$contact_icon_url = isset($contact_icon['url']) ? $contact_icon['url'] : '';
-$contact_icon_alt = isset($contact_icon['alt']) ? $contact_icon['alt'] : $contact_text;
-$contact_icon_width = isset($attributes['contactIconWidth']) ? $attributes['contactIconWidth'] : '32';
-$contact_icon_label = isset($attributes['contactIconLabel']) ? $attributes['contactIconLabel'] : '';
 $container_width = isset($attributes['containerWidth']) ? $attributes['containerWidth'] : '1200';
+$inline_nav_items = isset($attributes['inlineNavItems']) ? $attributes['inlineNavItems'] : [];
 
 // Read parentColor from the inner navigation block so the header can expose it as a CSS var
 $nav_parent_color = '#ffffff';
@@ -34,39 +28,76 @@ if ($bg_color && $bg_color !== 'transparent') {
 if ($container_width) {
     $header_styles[] = '--container-width: ' . esc_attr($container_width) . 'px';
 }
+if ($logo_width) {
+    $header_styles[] = '--logo-width: ' . esc_attr($logo_width) . 'px';
+}
 $header_style = !empty($header_styles) ? ' style="' . implode('; ', $header_styles) . ';"' : '';
 
-// Container style
 $container_style = $container_width ? ' style="max-width: ' . esc_attr($container_width) . 'px;"' : '';
 ?>
 <header <?php echo get_block_wrapper_attributes(['class' => 'site-header']); ?><?php echo $header_style; ?>>
     <div class="container"<?php echo $container_style; ?>>
         <div class="menu-inner">
-            <!-- Contact link - LEFT -->
-            <a href="<?php echo esc_url($contact_url); ?>" class="contact-link">
-                <?php if ($contact_display_mode === 'icon' && $contact_icon_url): ?>
-                    <img src="<?php echo esc_url($contact_icon_url); ?>" alt="<?php echo esc_attr($contact_icon_alt); ?>" class="contact-icon" style="max-width: <?php echo esc_attr($contact_icon_width); ?>px; width: 100%;"><?php if ($contact_icon_label): ?><span class="contact-icon-label"><?php echo esc_html($contact_icon_label); ?></span><?php endif; ?>
-                <?php else: ?>
-                    <?php echo esc_html($contact_text); ?>
-                <?php endif; ?>
-            </a>
-
-            <!-- Logo - CENTER -->
+            <!-- Logo - LEFT -->
             <?php if ($logo_url): ?>
                 <a href="<?php echo esc_url(home_url('/')); ?>" class="logo">
-                    <img src="<?php echo esc_url($logo_url); ?>" alt="<?php echo esc_attr($logo_alt); ?>" class="logo-img">
+                    <img src="<?php echo esc_url($logo_url); ?>" alt="<?php echo esc_attr($logo_alt); ?>" class="logo-img" style="width: <?php echo esc_attr($logo_width); ?>px;">
                 </a>
             <?php endif; ?>
 
-            <!-- Menu icon - RIGHT -->
-            <div class="menu-icon"></div>
+            <!-- Inline desktop nav - CENTER-RIGHT -->
+            <?php if (!empty($inline_nav_items)): ?>
+                <nav class="inline-nav">
+                    <?php foreach ($inline_nav_items as $item): ?>
+                        <?php
+                        $has_children = !empty($item['children']);
+                        $item_url = isset($item['url']) ? $item['url'] : '';
+                        $item_label = isset($item['label']) ? $item['label'] : '';
+                        ?>
+                        <div class="inline-nav-item<?php echo $has_children ? ' has-dropdown' : ''; ?>">
+                            <?php if ($item_url && !$has_children): ?>
+                                <a href="<?php echo esc_url($item_url); ?>" class="inline-nav-label"><?php echo esc_html($item_label); ?></a>
+                            <?php else: ?>
+                                <button type="button" class="inline-nav-label">
+                                    <?php echo esc_html($item_label); ?>
+                                    <?php if ($has_children): ?>
+                                        <svg class="inline-nav-chevron" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0082C9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    <?php endif; ?>
+                                </button>
+                            <?php endif; ?>
+                            <?php if ($has_children): ?>
+                                <div class="inline-nav-dropdown">
+                                    <?php foreach ($item['children'] as $child): ?>
+                                        <a href="<?php echo esc_url(isset($child['url']) ? $child['url'] : '#'); ?>" class="inline-nav-dropdown-item">
+                                            <?php echo esc_html(isset($child['label']) ? $child['label'] : ''); ?>
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </nav>
+            <?php endif; ?>
+
+            <!-- Burger menu icon - RIGHT -->
+            <div class="menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
 
             <!-- Mobile menu overlay -->
             <nav class="wp-block-navigation main-menu">
                 <?php echo $content; ?>
             </nav>
 
-            <div class="close-icon"></div>
+            <!-- Close icon — inline SVG inherits --parent-color via currentColor -->
+            <div class="close-icon" role="button" aria-label="Close menu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="4" y1="4" x2="20" y2="20"/>
+                    <line x1="20" y1="4" x2="4" y2="20"/>
+                </svg>
+            </div>
         </div>
     </div>
 </header>

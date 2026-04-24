@@ -8,14 +8,10 @@
   "description": "Site header with logo, navigation, and search",
   "attributes": {
     "logo": {"type": "object", "default": {"url": "", "id": null, "alt": ""}},
+    "logoWidth": {"type": "string", "default": "160"},
     "backgroundColor": {"type": "string", "default": "transparent"},
-    "contactText": {"type": "string", "default": "Contact us"},
-    "contactUrl": {"type": "string", "default": "#contact"},
-    "contactDisplayMode": {"type": "string", "default": "label"},
-    "contactIcon": {"type": "object", "default": {"url": "", "id": null, "alt": ""}},
-    "contactIconWidth": {"type": "string", "default": "32"},
-    "contactIconLabel": {"type": "string", "default": ""},
-    "containerWidth": {"type": "string", "default": "1200"}
+    "containerWidth": {"type": "string", "default": "1200"},
+    "inlineNavItems": {"type": "array", "default": []}
   },
   "supports": {"html": false, "align": ["full"]},
   "textdomain": "giant-header",

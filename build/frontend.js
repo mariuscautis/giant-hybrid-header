@@ -1,1 +1,97 @@
-document.addEventListener("DOMContentLoaded",function(){const e=document.querySelector(".menu-icon"),n=document.querySelector(".main-menu"),t=document.querySelector(".menu-inner"),o=document.querySelector(".close-icon");e&&n&&t&&e.addEventListener("click",function(){n.classList.add("open"),t.classList.add("open")}),o&&n&&t&&o.addEventListener("click",function(){n.classList.remove("open"),t.classList.remove("open")}),document.addEventListener("keydown",function(e){"Escape"===e.key&&n&&n.classList.contains("open")&&(n.classList.remove("open"),t.classList.remove("open"))});const c=document.querySelector(".search-bar"),s=document.querySelector("header .search-bar .search-inner form input.search-submit"),a=document.querySelector("header .search-inner form input[type='search']");s&&(s.style.display="none"),c&&(c.addEventListener("mouseenter",function(){c.classList.add("active"),s&&(s.value=""),setTimeout(function(){s&&(s.style.display="block")},500)}),c.addEventListener("mouseleave",function(){a&&!a.value.trim()&&!a.matches(":focus")&&(c.classList.remove("active"),s&&(s.style.display="none"))}),a&&(a.addEventListener("input",function(){c.classList.add("active"),setTimeout(function(){s&&(s.style.display="block")},500)}),a.addEventListener("focus",function(){c.classList.add("active"),setTimeout(function(){s&&(s.style.display="block")},500)}),a.addEventListener("blur",function(){a.value.trim()||(c.classList.remove("active"),s&&(s.style.display="none"))})),document.addEventListener("keydown",function(e){"Escape"===e.key&&c.classList.contains("active")&&(c.classList.remove("active"),s&&(s.style.display="none"))}))});document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".sub-menu-heading").forEach(function(e){e.classList.contains("parent-with-url")?(e.querySelector(".menu-toggle-btn")&&e.querySelector(".menu-toggle-btn").addEventListener("click",function(n){n.preventDefault(),n.stopPropagation(),t(e)}),e.querySelector("a")&&e.querySelector("a").addEventListener("click",function(e){})):e.addEventListener("click",function(){t(e)})});function t(e){const n=e.closest(".faq-category")||document;n.querySelectorAll(".sub-menu-heading").forEach(n=>{if(n!==e){n.classList.remove("active");const e=n.nextElementSibling;if(e&&e.classList.contains("menu-children")){const n=e.querySelector(".menu-child-list");n&&n.classList.remove("active")}}}),e.classList.toggle("active");const t=e.nextElementSibling;if(t&&t.classList.contains("menu-children")){const e=t.querySelector(".menu-child-list");e&&e.classList.toggle("active")}}});
+document.addEventListener("DOMContentLoaded", function () {
+
+    // ── Burger menu ──────────────────────────────────────────────────────────
+    var menuIcon   = document.querySelector(".menu-icon");
+    var mainMenu   = document.querySelector(".main-menu");
+    var menuInner  = document.querySelector(".menu-inner");
+    var closeIcon  = document.querySelector(".close-icon");
+
+    if (menuIcon && mainMenu && menuInner) {
+        menuIcon.addEventListener("click", function () {
+            mainMenu.classList.add("open");
+            menuInner.classList.add("open");
+        });
+    }
+    if (closeIcon && mainMenu && menuInner) {
+        closeIcon.addEventListener("click", function () {
+            mainMenu.classList.remove("open");
+            menuInner.classList.remove("open");
+        });
+    }
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && mainMenu && mainMenu.classList.contains("open")) {
+            mainMenu.classList.remove("open");
+            menuInner && menuInner.classList.remove("open");
+        }
+    });
+
+    // ── Fullscreen nav submenus ──────────────────────────────────────────────
+    document.querySelectorAll(".sub-menu-heading").forEach(function (heading) {
+        if (heading.classList.contains("parent-with-url")) {
+            var toggleBtn = heading.querySelector(".menu-toggle-btn");
+            if (toggleBtn) {
+                toggleBtn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleSubmenu(heading);
+                });
+            }
+        } else {
+            heading.addEventListener("click", function () {
+                toggleSubmenu(heading);
+            });
+        }
+    });
+
+    function toggleSubmenu(heading) {
+        var container = heading.closest(".faq-category") || document;
+        container.querySelectorAll(".sub-menu-heading").forEach(function (other) {
+            if (other !== heading) {
+                other.classList.remove("active");
+                var sib = other.nextElementSibling;
+                if (sib && sib.classList.contains("menu-children")) {
+                    var list = sib.querySelector(".menu-child-list");
+                    if (list) list.classList.remove("active");
+                }
+            }
+        });
+        heading.classList.toggle("active");
+        var next = heading.nextElementSibling;
+        if (next && next.classList.contains("menu-children")) {
+            var list = next.querySelector(".menu-child-list");
+            if (list) list.classList.toggle("active");
+        }
+    }
+
+    // ── Inline desktop nav dropdowns ─────────────────────────────────────────
+    document.querySelectorAll(".inline-nav-item.has-dropdown").forEach(function (item) {
+        var btn = item.querySelector(".inline-nav-label");
+        if (!btn) return;
+
+        btn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            var isOpen = item.classList.contains("open");
+            // Close all others
+            document.querySelectorAll(".inline-nav-item.has-dropdown.open").forEach(function (other) {
+                other.classList.remove("open");
+            });
+            if (!isOpen) item.classList.add("open");
+        });
+    });
+
+    // Close inline dropdowns when clicking outside
+    document.addEventListener("click", function () {
+        document.querySelectorAll(".inline-nav-item.has-dropdown.open").forEach(function (item) {
+            item.classList.remove("open");
+        });
+    });
+
+    // Close inline dropdowns on Escape
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            document.querySelectorAll(".inline-nav-item.has-dropdown.open").forEach(function (item) {
+                item.classList.remove("open");
+            });
+        }
+    });
+});
