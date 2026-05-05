@@ -9,7 +9,7 @@ header .logo-img{width:var(--logo-width,160px);max-width:100%;height:auto;object
 /* Inline desktop nav - fills space between logo and burger */
 header .inline-nav{display:flex;align-items:center;gap:28px;margin-left:auto;margin-right:28px}
 header .inline-nav-item{position:relative}
-header .inline-nav-label{background:none;border:none;padding:0;cursor:pointer;font-size:15px;font-weight:500;color:var(--parent-color,#fff);text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:opacity 0.2s;font-family:inherit}
+header .inline-nav-label{background:none;border:none;padding:0;cursor:pointer;font-size:16px;font-weight:600;color:var(--parent-color,#fff);text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:opacity 0.2s;font-family:inherit}
 header .inline-nav-label:hover{opacity:0.75}
 header .inline-nav-chevron{transition:transform 0.25s;flex-shrink:0}
 header .inline-nav-item.open .inline-nav-chevron{transform:rotate(180deg)}

@@ -40,6 +40,7 @@ function giant_header_register_meta() {
     register_post_meta('', '_header_overlay_mode',    $args);
     register_post_meta('', '_header_overlay_opacity', $args);
     register_post_meta('', '_header_logo_tint',       $args);
+    register_post_meta('', '_header_text_tint',       $args);
 }
 add_action('init', 'giant_header_register_meta');
 
@@ -156,7 +157,7 @@ function giant_header_meta_box_html($post) {
         'black' => 'Black',
     ];
     ?>
-    <p style="margin:0;border-top:1px solid #ddd;padding-top:10px;">
+    <p style="margin:0 0 10px;border-top:1px solid #ddd;padding-top:10px;">
         <label style="display:block;font-weight:600;margin-bottom:6px;">Logo tint</label>
         <?php foreach ($tints as $val => $label): ?>
             <label style="display:flex;align-items:center;gap:6px;margin-bottom:4px;cursor:pointer;">
@@ -165,6 +166,21 @@ function giant_header_meta_box_html($post) {
             </label>
         <?php endforeach; ?>
         <span style="display:block;font-size:11px;color:#757575;margin-top:4px;">Applies when the overlay activates.</span>
+    </p>
+
+    <?php
+    $text_tint = get_post_meta($post->ID, '_header_text_tint', true);
+    if (!$text_tint) $text_tint = 'none';
+    ?>
+    <p style="margin:0;border-top:1px solid #ddd;padding-top:10px;">
+        <label style="display:block;font-weight:600;margin-bottom:6px;">Overlay active text colour</label>
+        <?php foreach ($tints as $val => $label): ?>
+            <label style="display:flex;align-items:center;gap:6px;margin-bottom:4px;cursor:pointer;">
+                <input type="radio" name="header_text_tint" value="<?php echo esc_attr($val); ?>" <?php checked($text_tint, $val); ?>>
+                <?php echo esc_html($label); ?>
+            </label>
+        <?php endforeach; ?>
+        <span style="display:block;font-size:11px;color:#757575;margin-top:4px;">Applies to burger icon &amp; desktop nav labels when overlay is active.</span>
     </p>
 
     <script>
@@ -227,6 +243,10 @@ function giant_header_save_meta($post_id) {
         $tint = sanitize_text_field($_POST['header_logo_tint']);
         update_post_meta($post_id, '_header_logo_tint', in_array($tint, ['none', 'white', 'black']) ? $tint : 'none');
     }
+    if (isset($_POST['header_text_tint'])) {
+        $tint = sanitize_text_field($_POST['header_text_tint']);
+        update_post_meta($post_id, '_header_text_tint', in_array($tint, ['none', 'white', 'black']) ? $tint : 'none');
+    }
 }
 add_action('save_post', 'giant_header_save_meta');
 
@@ -237,8 +257,9 @@ function giant_header_inject_overlay_vars() {
     $color     = get_post_meta($post_id, '_header_overlay_color',   true);
     $mode      = get_post_meta($post_id, '_header_overlay_mode',    true);
     $opacity   = get_post_meta($post_id, '_header_overlay_opacity', true);
-    $logo_tint = get_post_meta($post_id, '_header_logo_tint',       true);
-    if (!$color && !$mode && !$logo_tint) return;
+    $logo_tint = get_post_meta($post_id, '_header_logo_tint', true);
+    $text_tint = get_post_meta($post_id, '_header_text_tint', true);
+    if (!$color && !$mode && !$logo_tint && !$text_tint) return;
 
     $color   = $color ?: '#000000';
     $mode    = in_array($mode, ['scroll', 'always']) ? $mode : 'scroll';
@@ -260,8 +281,9 @@ function giant_header_inject_overlay_vars() {
        . '</style>' . "\n";
 
     $logo_tint = in_array($logo_tint, ['none', 'white', 'black']) ? $logo_tint : 'none';
+    $text_tint = in_array($text_tint, ['none', 'white', 'black']) ? $text_tint : 'none';
 
     // Pass settings to JS
-    echo '<script>window.giantHeaderOverlay={color:"' . esc_js($color) . '",mode:"' . esc_js($mode) . '",logoTint:"' . esc_js($logo_tint) . '"};</script>' . "\n";
+    echo '<script>window.giantHeaderOverlay={color:"' . esc_js($color) . '",mode:"' . esc_js($mode) . '",logoTint:"' . esc_js($logo_tint) . '",textTint:"' . esc_js($text_tint) . '"};</script>' . "\n";
 }
 add_action('wp_head', 'giant_header_inject_overlay_vars');
