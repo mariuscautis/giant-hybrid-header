@@ -4,19 +4,31 @@ document.addEventListener("DOMContentLoaded", function () {
     var siteHeader = document.querySelector(".site-header");
     if (siteHeader && window.giantHeaderOverlay) {
         var overlay = window.giantHeaderOverlay;
+        var logoImg = siteHeader.querySelector(".logo-img");
+
+        var tintFilters = {
+            "white": "brightness(0) invert(1)",
+            "black": "brightness(0)",
+            "none":  ""
+        };
+
+        function applyLogoTint(active) {
+            if (!logoImg || !overlay.logoTint || overlay.logoTint === "none") return;
+            logoImg.style.filter = active ? (tintFilters[overlay.logoTint] || "") : "";
+        }
+
         if (overlay.mode === "always") {
             siteHeader.classList.add("overlay-always");
+            applyLogoTint(true);
         } else if (overlay.mode === "scroll") {
             siteHeader.classList.add("overlay-scroll");
             var ticking = false;
             window.addEventListener("scroll", function () {
                 if (!ticking) {
                     requestAnimationFrame(function () {
-                        if (window.scrollY > 50) {
-                            siteHeader.classList.add("scrolled");
-                        } else {
-                            siteHeader.classList.remove("scrolled");
-                        }
+                        var scrolled = window.scrollY > 50;
+                        siteHeader.classList.toggle("scrolled", scrolled);
+                        applyLogoTint(scrolled);
                         ticking = false;
                     });
                     ticking = true;

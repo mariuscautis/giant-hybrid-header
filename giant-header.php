@@ -39,6 +39,7 @@ function giant_header_register_meta() {
     register_post_meta('', '_header_overlay_color',   $args);
     register_post_meta('', '_header_overlay_mode',    $args);
     register_post_meta('', '_header_overlay_opacity', $args);
+    register_post_meta('', '_header_logo_tint',       $args);
 }
 add_action('init', 'giant_header_register_meta');
 
@@ -134,7 +135,7 @@ function giant_header_meta_box_html($post) {
         <input type="range" name="header_overlay_opacity" id="gh-opacity-range" min="0" max="100" value="<?php echo esc_attr($opacity); ?>" style="width:100%;">
     </p>
 
-    <p style="margin:0;">
+    <p style="margin:0 0 10px;">
         <label style="display:block;font-weight:600;margin-bottom:6px;">Overlay mode</label>
         <label style="display:flex;align-items:center;gap:6px;margin-bottom:4px;cursor:pointer;">
             <input type="radio" name="header_overlay_mode" value="scroll" <?php checked($mode, 'scroll'); ?>>
@@ -144,6 +145,26 @@ function giant_header_meta_box_html($post) {
             <input type="radio" name="header_overlay_mode" value="always" <?php checked($mode, 'always'); ?>>
             Always show colour
         </label>
+    </p>
+
+    <?php
+    $logo_tint = get_post_meta($post->ID, '_header_logo_tint', true);
+    if (!$logo_tint) $logo_tint = 'none';
+    $tints = [
+        'none'  => 'Original',
+        'white' => 'White',
+        'black' => 'Black',
+    ];
+    ?>
+    <p style="margin:0;border-top:1px solid #ddd;padding-top:10px;">
+        <label style="display:block;font-weight:600;margin-bottom:6px;">Logo tint</label>
+        <?php foreach ($tints as $val => $label): ?>
+            <label style="display:flex;align-items:center;gap:6px;margin-bottom:4px;cursor:pointer;">
+                <input type="radio" name="header_logo_tint" value="<?php echo esc_attr($val); ?>" <?php checked($logo_tint, $val); ?>>
+                <?php echo esc_html($label); ?>
+            </label>
+        <?php endforeach; ?>
+        <span style="display:block;font-size:11px;color:#757575;margin-top:4px;">Applies when the overlay activates.</span>
     </p>
 
     <script>
@@ -202,6 +223,10 @@ function giant_header_save_meta($post_id) {
         $opacity = max(0, min(100, $opacity));
         update_post_meta($post_id, '_header_overlay_opacity', (string) $opacity);
     }
+    if (isset($_POST['header_logo_tint'])) {
+        $tint = sanitize_text_field($_POST['header_logo_tint']);
+        update_post_meta($post_id, '_header_logo_tint', in_array($tint, ['none', 'white', 'black']) ? $tint : 'none');
+    }
 }
 add_action('save_post', 'giant_header_save_meta');
 
@@ -209,10 +234,11 @@ function giant_header_inject_overlay_vars() {
     $post_id = get_queried_object_id();
     if (!$post_id) return;
 
-    $color   = get_post_meta($post_id, '_header_overlay_color',   true);
-    $mode    = get_post_meta($post_id, '_header_overlay_mode',    true);
-    $opacity = get_post_meta($post_id, '_header_overlay_opacity', true);
-    if (!$color && !$mode) return;
+    $color     = get_post_meta($post_id, '_header_overlay_color',   true);
+    $mode      = get_post_meta($post_id, '_header_overlay_mode',    true);
+    $opacity   = get_post_meta($post_id, '_header_overlay_opacity', true);
+    $logo_tint = get_post_meta($post_id, '_header_logo_tint',       true);
+    if (!$color && !$mode && !$logo_tint) return;
 
     $color   = $color ?: '#000000';
     $mode    = in_array($mode, ['scroll', 'always']) ? $mode : 'scroll';
@@ -233,7 +259,9 @@ function giant_header_inject_overlay_vars() {
        . '}'
        . '</style>' . "\n";
 
-    // Pass mode to JS
-    echo '<script>window.giantHeaderOverlay={color:"' . esc_js($color) . '",mode:"' . esc_js($mode) . '"};</script>' . "\n";
+    $logo_tint = in_array($logo_tint, ['none', 'white', 'black']) ? $logo_tint : 'none';
+
+    // Pass settings to JS
+    echo '<script>window.giantHeaderOverlay={color:"' . esc_js($color) . '",mode:"' . esc_js($mode) . '",logoTint:"' . esc_js($logo_tint) . '"};</script>' . "\n";
 }
 add_action('wp_head', 'giant_header_inject_overlay_vars');
