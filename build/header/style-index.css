@@ -32,7 +32,7 @@ header .main-menu.open{transform:translateY(0);opacity:1}
 header .main-menu .nav-outer,
 header .main-menu .menu-outer{width:100%;max-width:var(--container-width, 1200px);margin:0 auto;padding:0 20px;box-sizing:border-box}
 header .main-menu li{list-style:none;margin-bottom:10px}
-header .main-menu li a{text-decoration:none;font-weight:500}
+header .main-menu li a{text-decoration:none;font-weight:600}
 
 /* Close icon */
 header .close-icon{position:fixed;top:70px;right:calc(50% - var(--container-width, 1200px) / 2 + 54px);width:52px;height:52px;opacity:0;pointer-events:none;transition:opacity 0.3s;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;color:var(--parent-color,#fff);border-radius:8px;}
@@ -43,9 +43,27 @@ header .menu-inner.open .close-icon{opacity:1;pointer-events:auto}
 header .close-icon svg{width:40px;height:40px;display:block;transform:rotate(-180deg);transition:transform 1s}
 header .close-icon:hover svg{transform:rotate(445deg);transition:transform 2.5s}
 
+:root {
+    --header-overlay-r: 0;
+    --header-overlay-g: 0;
+    --header-overlay-b: 0;
+    --header-overlay-a: 0.8;
+}
+
 .site-header {
-    background: linear-gradient( to bottom, rgba(0,0,0,10) 2%, transparent 90% );
+    background: linear-gradient( to bottom, rgba(0,0,0,0.4) 2%, transparent 90% );
     padding: 40px 0px;
+    transition: background-color 0.4s ease;
+}
+
+/* Custom colour — always mode: flat background, no gradient */
+.site-header.overlay-always {
+    background: rgba(var(--header-overlay-r),var(--header-overlay-g),var(--header-overlay-b),var(--header-overlay-a));
+}
+
+/* Custom colour — scroll mode: flat background activates on scroll */
+.site-header.overlay-scroll.scrolled {
+    background: rgba(var(--header-overlay-r),var(--header-overlay-g),var(--header-overlay-b),var(--header-overlay-a));
 }
 /* Hide inline nav on mobile, show burger only */
 @media screen and (max-width:768px){

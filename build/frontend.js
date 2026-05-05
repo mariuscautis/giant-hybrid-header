@@ -1,5 +1,30 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    // ── Header overlay (per-page colour + scroll mode) ───────────────────────
+    var siteHeader = document.querySelector(".site-header");
+    if (siteHeader && window.giantHeaderOverlay) {
+        var overlay = window.giantHeaderOverlay;
+        if (overlay.mode === "always") {
+            siteHeader.classList.add("overlay-always");
+        } else if (overlay.mode === "scroll") {
+            siteHeader.classList.add("overlay-scroll");
+            var ticking = false;
+            window.addEventListener("scroll", function () {
+                if (!ticking) {
+                    requestAnimationFrame(function () {
+                        if (window.scrollY > 50) {
+                            siteHeader.classList.add("scrolled");
+                        } else {
+                            siteHeader.classList.remove("scrolled");
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+        }
+    }
+
     // ── Burger menu ──────────────────────────────────────────────────────────
     var menuIcon   = document.querySelector(".menu-icon");
     var mainMenu   = document.querySelector(".main-menu");
