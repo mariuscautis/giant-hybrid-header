@@ -53,22 +53,24 @@ $container_style = $container_width ? ' style="max-width: ' . esc_attr($containe
                         $has_children = !empty($item['children']);
                         $item_url = isset($item['url']) ? $item['url'] : '';
                         $item_label = isset($item['label']) ? $item['label'] : '';
+                        $item_new_tab = !empty($item['newTab']);
                         ?>
                         <div class="inline-nav-item<?php echo $has_children ? ' has-dropdown' : ''; ?>">
                             <?php if ($item_url && !$has_children): ?>
-                                <a href="<?php echo esc_url($item_url); ?>" class="inline-nav-label"><?php echo esc_html($item_label); ?></a>
+                                <a href="<?php echo esc_url($item_url); ?>" class="inline-nav-label"<?php if ($item_new_tab): ?> target="_blank" rel="noopener noreferrer"<?php endif; ?>><?php echo esc_html($item_label); ?></a>
                             <?php else: ?>
                                 <button type="button" class="inline-nav-label">
                                     <?php echo esc_html($item_label); ?>
                                     <?php if ($has_children): ?>
-                                        <svg class="inline-nav-chevron" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0082C9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                        <img class="inline-nav-chevron" src="<?php echo esc_url(plugins_url('assets/chevron.svg', dirname(dirname(__DIR__)) . '/giant-header.php')); ?>" alt="" width="12" height="12" aria-hidden="true">
                                     <?php endif; ?>
                                 </button>
                             <?php endif; ?>
                             <?php if ($has_children): ?>
                                 <div class="inline-nav-dropdown">
                                     <?php foreach ($item['children'] as $child): ?>
-                                        <a href="<?php echo esc_url(isset($child['url']) ? $child['url'] : '#'); ?>" class="inline-nav-dropdown-item">
+                                        <?php $child_new_tab = !empty($child['newTab']); ?>
+                                        <a href="<?php echo esc_url(isset($child['url']) ? $child['url'] : '#'); ?>" class="inline-nav-dropdown-item"<?php if ($child_new_tab): ?> target="_blank" rel="noopener noreferrer"<?php endif; ?>>
                                             <?php echo esc_html(isset($child['label']) ? $child['label'] : ''); ?>
                                         </a>
                                     <?php endforeach; ?>

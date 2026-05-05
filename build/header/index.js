@@ -1,9 +1,9 @@
 (function(wp) {
     const { registerBlockType } = wp.blocks;
     const { useBlockProps, MediaUpload, MediaUploadCheck, InnerBlocks, InspectorControls, ColorPalette } = wp.blockEditor;
-    const { Button, PanelBody, TextControl, BaseControl, Modal } = wp.components;
+    const { Button, PanelBody, TextControl, BaseControl, Modal, CheckboxControl } = wp.components;
     const { __ } = wp.i18n;
-    const { createElement: el, Fragment, useState } = wp.element;
+    const { createElement: el, Fragment, useState, useRef } = wp.element;
 
     registerBlockType('giant-header/header', {
         edit: function(props) {
@@ -27,7 +27,7 @@
             // ── Inline nav helpers ─────────────────────────────────────────
 
             const addNavItem = function() {
-                setAttributes({ inlineNavItems: [...inlineNavItems, { id: Date.now(), label: '', url: '', children: [] }] });
+                setAttributes({ inlineNavItems: [...inlineNavItems, { id: Date.now(), label: '', url: '', newTab: false, children: [] }] });
             };
 
             const updateNavItem = function(index, field, value) {
@@ -44,7 +44,7 @@
             const addNavChild = function(itemIndex) {
                 const updated = inlineNavItems.map(function(item, i) {
                     if (i !== itemIndex) return item;
-                    return Object.assign({}, item, { children: [...(item.children || []), { id: Date.now(), label: '', url: '' }] });
+                    return Object.assign({}, item, { children: [...(item.children || []), { id: Date.now(), label: '', url: '', newTab: false }] });
                 });
                 setAttributes({ inlineNavItems: updated });
             };
@@ -68,6 +68,20 @@
                 setAttributes({ inlineNavItems: updated });
             };
 
+            const reorderNavChild = function(itemIndex, fromIndex, toIndex) {
+                if (fromIndex === toIndex) return;
+                const updated = inlineNavItems.map(function(item, i) {
+                    if (i !== itemIndex) return item;
+                    const children = [...(item.children || [])];
+                    const moved = children.splice(fromIndex, 1)[0];
+                    children.splice(toIndex, 0, moved);
+                    return Object.assign({}, item, { children: children });
+                });
+                setAttributes({ inlineNavItems: updated });
+            };
+
+            const navDragRef = useRef(null);
+
             // ── Nav modal ──────────────────────────────────────────────────
 
             const renderNavModal = function() {
@@ -86,8 +100,8 @@
                                         key: item.id || itemIndex,
                                         style: { background: '#fff', border: '1px solid #ddd', borderRadius: '8px', padding: '16px', marginBottom: '12px' }
                                     },
-                                        // Top row: label + url
-                                        el('div', { style: { display: 'flex', gap: '10px', alignItems: 'flex-end', marginBottom: '12px' } },
+                                        // Top row: label + url + new tab + remove
+                                        el('div', { style: { display: 'flex', gap: '10px', alignItems: 'flex-end', marginBottom: '8px' } },
                                             el(TextControl, {
                                                 label: __('Label'),
                                                 value: item.label,
@@ -106,6 +120,12 @@
                                                 onClick: function() { removeNavItem(itemIndex); }
                                             }, __('✕ Remove'))
                                         ),
+                                        el(CheckboxControl, {
+                                            label: __('Open in new tab'),
+                                            checked: !!item.newTab,
+                                            onChange: function(v) { updateNavItem(itemIndex, 'newTab', v); },
+                                            style: { marginBottom: '12px' }
+                                        }),
                                         // Children
                                         el('div', { style: { background: '#f8f9fa', border: '1px solid #e4e6ea', borderRadius: '6px', padding: '12px' } },
                                             el('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: children.length ? '10px' : '0' } },
@@ -117,8 +137,40 @@
                                             children.map(function(child, childIndex) {
                                                 return el('div', {
                                                     key: child.id || childIndex,
-                                                    style: { display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '8px', alignItems: 'flex-end', marginBottom: '8px' }
+                                                    style: { display: 'grid', gridTemplateColumns: 'auto 1fr 1fr auto auto', gap: '8px', alignItems: 'flex-end', marginBottom: '8px', background: '#fff', borderRadius: '6px', padding: '8px 10px', border: '1px solid #e0e0e0', transition: 'opacity 0.15s' },
+                                                    draggable: true,
+                                                    onDragStart: function(e) {
+                                                        navDragRef.current = { itemIndex: itemIndex, fromIndex: childIndex };
+                                                        e.dataTransfer.effectAllowed = 'move';
+                                                        e.currentTarget.style.opacity = '0.4';
+                                                    },
+                                                    onDragEnd: function(e) {
+                                                        e.currentTarget.style.opacity = '';
+                                                        e.currentTarget.style.borderColor = '';
+                                                        e.currentTarget.style.background = '';
+                                                    },
+                                                    onDragOver: function(e) {
+                                                        e.preventDefault();
+                                                        e.dataTransfer.dropEffect = 'move';
+                                                        e.currentTarget.style.borderColor = '#007cba';
+                                                        e.currentTarget.style.background = '#f0f7fb';
+                                                    },
+                                                    onDragLeave: function(e) {
+                                                        e.currentTarget.style.borderColor = '';
+                                                        e.currentTarget.style.background = '';
+                                                    },
+                                                    onDrop: function(e) {
+                                                        e.preventDefault();
+                                                        e.currentTarget.style.borderColor = '';
+                                                        e.currentTarget.style.background = '';
+                                                        var drag = navDragRef.current;
+                                                        if (drag && drag.itemIndex === itemIndex) {
+                                                            reorderNavChild(itemIndex, drag.fromIndex, childIndex);
+                                                        }
+                                                        navDragRef.current = null;
+                                                    }
                                                 },
+                                                    el('div', { style: { alignSelf: 'flex-end', paddingBottom: '8px', cursor: 'grab', color: '#aaa', fontSize: '16px', lineHeight: 1, userSelect: 'none' }, title: __('Drag to reorder') }, '⠿'),
                                                     el(TextControl, {
                                                         label: __('Label'),
                                                         value: child.label,
@@ -131,6 +183,13 @@
                                                         onChange: function(v) { updateNavChild(itemIndex, childIndex, 'url', v); },
                                                         placeholder: 'https://'
                                                     }),
+                                                    el('div', { style: { display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingBottom: '4px' } },
+                                                        el(CheckboxControl, {
+                                                            label: __('New tab'),
+                                                            checked: !!child.newTab,
+                                                            onChange: function(v) { updateNavChild(itemIndex, childIndex, 'newTab', v); }
+                                                        })
+                                                    ),
                                                     el(Button, { isDestructive: true, isSmall: true, variant: 'tertiary',
                                                         onClick: function() { removeNavChild(itemIndex, childIndex); },
                                                         style: { alignSelf: 'flex-end', marginBottom: '2px' }
