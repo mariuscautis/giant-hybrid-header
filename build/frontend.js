@@ -4,13 +4,14 @@ document.addEventListener("DOMContentLoaded", function () {
     var siteHeader = document.querySelector(".site-header");
     if (siteHeader && window.giantHeaderOverlay) {
         var overlay = window.giantHeaderOverlay;
-        var logoImg    = siteHeader.querySelector(".logo-img");
-        var inlineNav  = siteHeader.querySelector(".inline-nav");
-        var menuIcon   = siteHeader.querySelector(".menu-icon");
+        var logoImg      = siteHeader.querySelector(".logo-img");
+        var inlineLabels = siteHeader.querySelectorAll(".inline-nav > .inline-nav-item > .inline-nav-label");
+        var menuIcon     = siteHeader.querySelector(".menu-icon");
 
         var tintFilters = {
             "white": "brightness(0) invert(1)",
             "black": "brightness(0)",
+            "navy":  "brightness(0) invert(1) sepia(1) saturate(17.5) hue-rotate(169deg) brightness(0.190)",
             "none":  ""
         };
 
@@ -22,8 +23,8 @@ document.addEventListener("DOMContentLoaded", function () {
         function applyTextTint(active) {
             if (!overlay.textTint || overlay.textTint === "none") return;
             var f = active ? (tintFilters[overlay.textTint] || "") : "";
-            if (inlineNav) inlineNav.style.filter = f;
-            if (menuIcon)  menuIcon.style.filter  = f;
+            inlineLabels.forEach(function(el) { el.style.filter = f; });
+            if (menuIcon) menuIcon.style.filter = f;
         }
 
         if (overlay.mode === "always") {

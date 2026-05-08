@@ -155,6 +155,7 @@ function giant_header_meta_box_html($post) {
         'none'  => 'Original',
         'white' => 'White',
         'black' => 'Black',
+        'navy'  => 'Navy (#233060)',
     ];
     ?>
     <p style="margin:0 0 10px;border-top:1px solid #ddd;padding-top:10px;">
@@ -241,11 +242,11 @@ function giant_header_save_meta($post_id) {
     }
     if (isset($_POST['header_logo_tint'])) {
         $tint = sanitize_text_field($_POST['header_logo_tint']);
-        update_post_meta($post_id, '_header_logo_tint', in_array($tint, ['none', 'white', 'black']) ? $tint : 'none');
+        update_post_meta($post_id, '_header_logo_tint', in_array($tint, ['none', 'white', 'black', 'navy']) ? $tint : 'none');
     }
     if (isset($_POST['header_text_tint'])) {
         $tint = sanitize_text_field($_POST['header_text_tint']);
-        update_post_meta($post_id, '_header_text_tint', in_array($tint, ['none', 'white', 'black']) ? $tint : 'none');
+        update_post_meta($post_id, '_header_text_tint', in_array($tint, ['none', 'white', 'black', 'navy']) ? $tint : 'none');
     }
 }
 add_action('save_post', 'giant_header_save_meta');
@@ -280,8 +281,8 @@ function giant_header_inject_overlay_vars() {
        . '}'
        . '</style>' . "\n";
 
-    $logo_tint = in_array($logo_tint, ['none', 'white', 'black']) ? $logo_tint : 'none';
-    $text_tint = in_array($text_tint, ['none', 'white', 'black']) ? $text_tint : 'none';
+    $logo_tint = in_array($logo_tint, ['none', 'white', 'black', 'navy']) ? $logo_tint : 'none';
+    $text_tint = in_array($text_tint, ['none', 'white', 'black', 'navy']) ? $text_tint : 'none';
 
     // Pass settings to JS
     echo '<script>window.giantHeaderOverlay={color:"' . esc_js($color) . '",mode:"' . esc_js($mode) . '",logoTint:"' . esc_js($logo_tint) . '",textTint:"' . esc_js($text_tint) . '"};</script>' . "\n";
